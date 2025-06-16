@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Mapa da Torre{% endblock %}
+
+{% block content %}
+    <h1>Mapa da Torre</h1>
+    <div style="display:flex;justify-content:center;">
+        <iframe src="{{ url_for('static', filename=mapa_path) }}" width="800" height="600"></iframe>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+        <a href="{{ url_for('index') }}">Voltar ao início</a>
+    </div>
+{% endblock %}

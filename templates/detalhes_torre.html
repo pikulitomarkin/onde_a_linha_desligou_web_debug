@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Torre{% endblock %}
+
+{% block content %}
+    <h1>Detalhes da Torre</h1>
+    <div style="max-width:400px;margin:0 auto;">
+        <p><strong>Torre:</strong> {{ detalhes['Torre'] }}</p>
+        <p><strong>Cidade:</strong> {{ detalhes['Cidade'] }}</p>
+        <p><strong>Setor:</strong> {{ detalhes['Setor'] }}</p>
+        <form action="{{ url_for('visualizar_mapa') }}" method="post">
+            <input type="hidden" name="df_key" value="{{ df_key }}">
+            <input type="hidden" name="codigo_torre" value="{{ detalhes['Torre'] }}">
+            <button type="submit">Visualizar no Mapa</button>
+        </form>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+        <a href="{{ url_for('index') }}">Voltar</a>
+    </div>
+{% endblock %}

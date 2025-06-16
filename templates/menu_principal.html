@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu Principal{% endblock %}
+
+{% block content %}
+    <h1>MENU PRINCIPAL</h1>
+    <div class="menu-buttons">
+        <a href="{{ url_for('londrina') }}">Linhas Londrina</a>
+        <a href="{{ url_for('campomourao') }}">Linhas Campo Mourão</a>
+    </div>
+{% endblock %}

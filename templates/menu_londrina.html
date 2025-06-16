@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Linhas Londrina{% endblock %}
+
+{% block content %}
+    <h1>Linhas - Londrina</h1>
+    <div class="menu-buttons">
+        {% for texto, chave, col_a, col_b, arquivo in botoes_londrina %}
+            <form action="{{ url_for('abrir_km') }}" method="post" style="width:100%;">
+                <input type="hidden" name="chave" value="{{ chave }}">
+                <input type="hidden" name="col_a" value="{{ col_a }}">
+                <input type="hidden" name="col_b" value="{{ col_b }}">
+                <input type="hidden" name="texto_linha" value="{{ texto }}">
+                <input type="hidden" name="nome_arquivo" value="{{ arquivo }}">
+                <button type="submit">{{ texto }}</button>
+            </form>
+        {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+        <a href="{{ url_for('index') }}">Voltar</a>
+    </div>
+{% endblock %}

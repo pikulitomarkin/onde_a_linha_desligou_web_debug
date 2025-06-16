@@ -1,0 +1,176 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    color: #222;
+}
+
+.container {
+    max-width: 600px;
+    min-width: 320px;
+    margin: 40px auto;
+    padding: 32px 16px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+h1 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 2rem;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+.menu-buttons a, .menu-buttons button {
+    display: block;
+    width: 80%;
+    max-width: 320px;
+    padding: 18px 0;
+    font-size: 1.2rem;
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    margin: 0 auto;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.menu-buttons a:hover, .menu-buttons button:hover {
+    background-color: #003d82;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto 24px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button[type="submit"] {
+    margin-top: 12px;
+}
+
+a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+iframe {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: block;
+    background: #fff;
+}
+
+p {
+    font-size: 1.1rem;
+    margin: 12px 0;
+}
+
+.titulo-km, .subtitulo {
+    text-transform: uppercase;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #0056b3;
+}
+
+.subtitulo {
+    font-size: 1.3rem;
+    margin-top: 32px;
+    margin-bottom: 16px;
+}
+
+.form-km label {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-km input[type="text"] {
+    width: 100%;
+    max-width: 480px;
+    min-width: 200px;
+    margin: 0 auto 24px auto;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    display: block;
+    box-sizing: border-box;
+}
+
+.form-km button[type="submit"] {
+    width: 100%;
+    max-width: 480px;
+    margin: 24px auto 0 auto;
+    display: block;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.voltar-link {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.voltar-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 800px) {
+    .container {
+        max-width: 98vw;
+        padding: 12px 2vw;
+    }
+    .menu-buttons a, .menu-buttons button {
+        width: 100%;
+        font-size: 1rem;
+    }
+    iframe {
+        width: 98vw !important;
+        height: 60vw !important;
+        min-height: 300px;
+    }
+}
