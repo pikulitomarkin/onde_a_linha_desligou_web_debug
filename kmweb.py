@@ -329,9 +329,5 @@ def serve_static(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
 if __name__ == "__main__":
-    import os
-
-    port = int(os.environ.get("PORT", 5000))
-    resources_dir = os.path.join(app.config['STATIC_FOLDER'], 'resources')
-    os.makedirs(resources_dir, exist_ok=True)
-    app.run(debug=True, host="0.0.0.0", port=port)
+    
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
