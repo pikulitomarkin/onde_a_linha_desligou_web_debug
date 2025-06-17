@@ -145,8 +145,6 @@ class KMAppCore:
             if not torre_coords:
                 raise ValueError(f"Torre '{codigo_torre}' não encontrada no arquivo GPX.")
 
-            print(f"Coordenadas da torre encontradas: {torre_coords}")  # Log para depuração
-
             # Cria o mapa com folium, carrega o GPX e destaca o ponto da torre
             mapa = folium.Map(location=torre_coords, zoom_start=15)
             with open(gpx_path, "r") as gpx_file:
@@ -165,11 +163,11 @@ class KMAppCore:
             mapa_path = "mapa_torre.html"
             mapa.save(os.path.join(app.config['STATIC_FOLDER'], mapa_path))
 
-            return mapa_path
+            return mapa_path, torre_coords  # <-- Retorne ambos
 
         except Exception as e:
-            print(f"Erro: {e}")  # Log para depuração
-            return f"Erro: {e}"
+            print(f"Erro: {e}")
+            return f"Erro: {e}", None
 
     def buscar_torre_no_gpx(self, codigo_torre, gpx_file, incluir_prefixo=False):
         if not gpx_file:
@@ -318,12 +316,12 @@ def visualizar_mapa():
     df_key = request.form["df_key"]
     codigo_torre = request.form["codigo_torre"]
 
-    mapa_path = km_app.visualizar_no_mapa(df_key, codigo_torre)
+    mapa_path, torre_coords = km_app.visualizar_no_mapa(df_key, codigo_torre)
 
     if "Erro" in mapa_path:
          return render_template("resultado.html", mensagem=mapa_path)
     else:
-        return render_template("mapa.html", mapa_path=mapa_path)
+        return render_template("mapa.html", mapa_path=mapa_path, latitude=torre_coords[0], longitude=torre_coords[1])
 
 # Rota para servir arquivos estáticos (CSS, JS, imagens, etc.)
 @app.route('/static/<path:filename>')
@@ -331,8 +329,9 @@ def serve_static(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
 if __name__ == "__main__":
-    # Garante que o diretório 'resources' existe dentro de 'static'
+    import os
+
+    port = int(os.environ.get("PORT", 5000))
     resources_dir = os.path.join(app.config['STATIC_FOLDER'], 'resources')
     os.makedirs(resources_dir, exist_ok=True)
-    # km_app.configurar_ambiente()  # Remova ou comente esta linha
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=port)

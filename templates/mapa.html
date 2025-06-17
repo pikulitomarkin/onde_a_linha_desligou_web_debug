@@ -10,4 +10,12 @@
     <div style="text-align:center;margin-top:32px;">
         <a href="{{ url_for('index') }}">Voltar ao início</a>
     </div>
+    {% if latitude and longitude %}
+        <div style="text-align:center;margin:24px 0;">
+            <a href="https://www.google.com/maps/search/?api=1&query={{ latitude }},{{ longitude }}" 
+               target="_blank" class="abrir-mapa">
+                ABRIR NO MAPA DO CELULAR
+            </a>
+        </div>
+    {% endif %}
 {% endblock %}
