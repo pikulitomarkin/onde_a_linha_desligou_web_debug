@@ -1,9 +1,17 @@
 const CACHE_NAME = 'kmweb-cache-v1';
 const urlsToCache = [
   '/',
+  '/menu_londrina',
+  '/menu_campomourao',
+  '/abrir_km',
+  '/base',
+  '/detalhes_torres',
+  '/resultado',
   '/static/style.css',
   '/static/manifest.json',
-  '/static/icon.png'
+  '/static/icon/icon192x192.png',
+  '/static/icon/icon512x512.png',
+  '/static/resources',
   // Adicione aqui outros arquivos essenciais se desejar
 ];
 
