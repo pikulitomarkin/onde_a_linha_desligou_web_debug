@@ -13,6 +13,9 @@
             <input type="hidden" name="codigo_torre" value="{{ detalhes['Torre'] }}">
             <button type="submit">Visualizar no Mapa</button>
         </form>
+        <a href="osmandmaps://?lat={{ detalhes['latitude'] }}&lon={{ detalhes['longitude'] }}&z=16" target="_blank">
+            Abrir no OsmAnd
+        </a>
     </div>
     <div style="text-align:center;margin-top:32px;">
         <a href="{{ url_for('index') }}">Voltar</a>
