@@ -330,7 +330,9 @@ def visualizar_mapa():
     if "Erro" in mapa_path:
          return render_template("resultado.html", mensagem=mapa_path)
     else:
-        return render_template("mapa.html", mapa_path=mapa_path)
+        # Corrige o caminho para URL estática
+        mapa_url = url_for('static', filename="mapa_torre.html")
+        return render_template("mapa.html", mapa_path=mapa_url)
 
 # Rota para servir arquivos estáticos (CSS, JS, imagens, etc.)
 @app.route('/static/<path:filename>')
