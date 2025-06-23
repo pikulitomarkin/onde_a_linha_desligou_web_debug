@@ -145,6 +145,8 @@ class KMAppCore:
             if not torre_coords:
                 raise ValueError(f"Torre '{codigo_torre}' não encontrada no arquivo GPX.")
 
+            print(f"Coordenadas da torre encontradas: {torre_coords}")  # Log para depuração
+
             # Cria o mapa com folium, carrega o GPX e destaca o ponto da torre
             mapa = folium.Map(location=torre_coords, zoom_start=15)
             with open(gpx_path, "r") as gpx_file:
@@ -160,14 +162,14 @@ class KMAppCore:
             ).add_to(mapa)
 
             # Salva o mapa em um arquivo HTML temporário
-            mapa_path = "mapa_torre.html"
-            mapa.save(os.path.join(app.config['STATIC_FOLDER'], mapa_path))
+            mapa_path = os.path.join(app.config['STATIC_FOLDER'], "mapa_torre.html")
+            mapa.save(mapa_path)
 
-            return mapa_path, torre_coords  # <-- Retorne ambos
+            return mapa_path
 
         except Exception as e:
-            print(f"Erro: {e}")
-            return f"Erro: {e}", None
+            print(f"Erro: {e}")  # Log para depuração
+            return f"Erro: {e}"
 
     def buscar_torre_no_gpx(self, codigo_torre, gpx_file, incluir_prefixo=False):
         if not gpx_file:
@@ -307,7 +309,7 @@ def processar_busca():
     resultado = km_app.processar_busca(df_key, valor_a, valor_b, col_a, col_b, nome_arquivo)
 
     if isinstance(resultado, dict):
-        return render_template("detalhes_torre.html", detalhes=resultado, df_key=df_key)
+        return render_template("detalhes_torre.html", detalhes=resultado, df_key=df_key, latitude=torre_coords[0], longitude=torre_coords[1])
     else:
         return render_template("resultado.html", mensagem=resultado)
 
@@ -316,18 +318,21 @@ def visualizar_mapa():
     df_key = request.form["df_key"]
     codigo_torre = request.form["codigo_torre"]
 
-    mapa_path, torre_coords = km_app.visualizar_no_mapa(df_key, codigo_torre)
+    mapa_path = km_app.visualizar_no_mapa(df_key, codigo_torre)
 
     if "Erro" in mapa_path:
          return render_template("resultado.html", mensagem=mapa_path)
     else:
-        return render_template("mapa.html", mapa_path=mapa_path, latitude=torre_coords[0], longitude=torre_coords[1])
+        return render_template("mapa.html", mapa_path=mapa_path)
 
 # Rota para servir arquivos estáticos (CSS, JS, imagens, etc.)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
-if __name__ == '__main__':
-    debug_mode = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    resources_dir = os.path.join(app.config['STATIC_FOLDER'], 'resources')
+    os.makedirs(resources_dir, exist_ok=True)
+    app.run(host="0.0.0.0", port=port)
