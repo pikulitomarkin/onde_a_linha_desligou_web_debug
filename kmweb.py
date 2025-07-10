@@ -135,7 +135,7 @@ class KMAppCore:
 
             torre_coords = self.buscar_torre_no_gpx(codigo_torre_ajustado, gpx_file)
             if not torre_coords:
-                return f"Erro: Torre '{codigo_torre_ajustado}' não encontrada no arquivo GPX."
+                return render_template("resultado.html", mensagem=f"Erro: Torre '{codigo_torre_ajustado}' não encontrada no arquivo GPX.")
 
             latitude, longitude = torre_coords
             print("Renderizando template detalhes_torre.html com os seguintes dados:")
@@ -150,7 +150,8 @@ class KMAppCore:
             }, df_key=df_key)
 
         except Exception as e:
-            return f"Erro: {e}"
+            # Exibe o erro em um template amigável
+            return render_template("resultado.html", mensagem=f"Erro: {e}")
 
     def mostrar_detalhes_torre(self, df_key, codigo_torre, cidade, setor):
         # Extrai apenas o número da torre
