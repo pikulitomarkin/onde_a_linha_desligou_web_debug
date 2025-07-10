@@ -357,19 +357,8 @@ def processar_busca():
     col_b = request.form["col_b"]
     nome_arquivo = request.form["nome_arquivo"]
 
-    resultado = km_app.processar_busca(df_key, valor_a, valor_b, col_a, col_b, nome_arquivo)
-
-    if isinstance(resultado, dict):
-        # Buscar o código da torre para obter as coordenadas
-        codigo_torre = resultado.get("Torre")
-        # Ajustar o código da torre para o formato do GPX
-        codigo_torre_ajustado = km_app.ajustar_codigo_torre(codigo_torre, df_key)
-        # Buscar as coordenadas no GPX
-        torre_coords = km_app.buscar_torre_no_gpx(codigo_torre_ajustado, km_app.linhas_gpx.get(df_key))
-        latitude, longitude = (torre_coords if torre_coords else (None, None))
-        return render_template("detalhes_torre.html", detalhes=resultado, df_key=df_key, latitude=latitude, longitude=longitude)
-    else:
-        return render_template("resultado.html", mensagem=resultado)
+    # A função processar_busca da classe já retorna o template renderizado
+    return km_app.processar_busca(df_key, valor_a, valor_b, col_a, col_b, nome_arquivo)
 
 @app.route("/visualizar_mapa", methods=["POST"])
 def visualizar_mapa():

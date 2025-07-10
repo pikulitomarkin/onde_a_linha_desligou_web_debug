@@ -4,8 +4,69 @@
 
 {% block content %}
     <h1>Resultado</h1>
-    <div style="max-width:400px;margin:0 auto;text-align:center;">
-        <p>{{ mensagem }}</p>
-        <a href="{{ url_for('index') }}">Voltar ao início</a>
+    
+    <div style="max-width:500px;margin:0 auto;">
+        <!-- Mensagem de Resultado -->
+        <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:24px;margin-bottom:24px;text-align:center;">
+            {% if 'Erro' in mensagem %}
+                <div style="color:#dc3545;font-size:3rem;margin-bottom:16px;">⚠️</div>
+                <div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:6px;padding:16px;margin-bottom:16px;">
+                    <h3 style="color:#721c24;margin:0 0 12px 0;font-size:1.2rem;">Erro Encontrado</h3>
+                    <p style="color:#721c24;margin:0;font-size:1rem;line-height:1.4;">{{ mensagem }}</p>
+                </div>
+            {% else %}
+                <div style="color:#28a745;font-size:3rem;margin-bottom:16px;">✅</div>
+                <div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:6px;padding:16px;margin-bottom:16px;">
+                    <h3 style="color:#155724;margin:0 0 12px 0;font-size:1.2rem;">Sucesso</h3>
+                    <p style="color:#155724;margin:0;font-size:1rem;line-height:1.4;">{{ mensagem }}</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Ações -->
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+            <a href="{{ url_for('index') }}" 
+               style="display:block;background:#0056b3;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+                🏠 Voltar ao Menu Principal
+            </a>
+            
+            <button onclick="history.back()" 
+                    style="background:#6c757d;color:#fff;padding:14px;border:none;border-radius:8px;font-size:1.1rem;font-weight:bold;cursor:pointer;transition:background 0.2s;">
+                ← Voltar à Página Anterior
+            </button>
+        </div>
     </div>
+
+    <style>
+        a[href*="index"]:hover {
+            background-color: #003d82 !important;
+        }
+        
+        button:hover {
+            background-color: #545b62 !important;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px 8px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            button, a {
+                font-size: 1rem !important;
+                padding: 12px !important;
+            }
+            
+            div[style*="font-size:3rem"] {
+                font-size: 2rem !important;
+            }
+        }
+    </style>
 {% endblock %}
