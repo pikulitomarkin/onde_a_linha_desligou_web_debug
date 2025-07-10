@@ -8,8 +8,11 @@ import platform
 
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 # Garante que o diretório 'static' existe
 os.makedirs(app.config['STATIC_FOLDER'], exist_ok=True)
+app.jinja_env.autoescape = True
 
 class KMAppCore:
     def __init__(self):
@@ -26,11 +29,13 @@ class KMAppCore:
             "lonlns": "londrina_lns.gpx",
             "lonlna": "londrina_lna.gpx",
             "lonlna2": "londrina_lna2.gpx",
-            "lna": "lna.gpx",
-            "lna_assis": "lna_assis.gpx",
-            "maringa_sarandi": "maringa_sarandi.gpx",
-            "assis_c2_londrina_norte": "assis_c2_londrina_norte.gpx",
-            "ivp_lon": "ivaipora_londrina.gpx"
+            "lon_sdi": "lon_sdi.gpx",
+            "lon_mga": "lon_mga.gpx",
+            "assis_c2_londrina_norte": "assis2.gpx",
+            "ivp_lon": "ivaipora_londrina.gpx",
+            "apucarana": "apucarana.gpx",
+            "cvo_cvo": "cvo_cvo.gpx",
+            "cvo_guaira": "cvo_guaira.gpx",
         }
         self.paths = None  # Adicione um atributo paths
         
@@ -51,15 +56,18 @@ class KMAppCore:
             workbook = load_workbook(caminho, data_only=True)
             sheet = workbook.active
 
-            colunas = [cell.value for cell in sheet[1]]
+            # Padroniza nomes das colunas para evitar problemas com espaços/extras
+            colunas = [str(cell.value).strip().upper() if cell.value else "" for cell in sheet[1]]
+            col_a_proc = col_a.strip().upper()
+            col_b_proc = col_b.strip().upper()
 
-            if col_a not in colunas or col_b not in colunas:
+            if col_a_proc not in colunas or col_b_proc not in colunas:
                 raise ValueError(f"As colunas '{col_a}' ou '{col_b}' não foram encontradas na planilha.")
             if "CODIGO" not in colunas or "MUNICIPIO" not in colunas or "SETOR" not in colunas:
                 raise ValueError("As colunas obrigatórias 'CODIGO', 'MUNICIPIO' ou 'SETOR' estão ausentes.")
 
-            idx_col_a = colunas.index(col_a)
-            idx_col_b = colunas.index(col_b)
+            idx_col_a = colunas.index(col_a_proc)
+            idx_col_b = colunas.index(col_b_proc)
             idx_codigo = colunas.index("CODIGO")
             idx_municipio = colunas.index("MUNICIPIO")
             idx_setor = colunas.index("SETOR")
@@ -67,25 +75,37 @@ class KMAppCore:
             menor_dif = float("inf")
             linha_selecionada = None
 
+            # LOG para depuração: Verificar valores de entrada
+            print(f"Valores fornecidos: valor_a={valor_a}, valor_b={valor_b}, col_a={col_a}, col_b={col_b}, nome_arquivo={nome_arquivo}")
+
+            # LOG para depuração: Verificar colunas disponíveis na planilha
+            print(f"Colunas disponíveis na planilha: {colunas}")
+
             for row in sheet.iter_rows(min_row=2, values_only=True):
-                val_a = row[idx_col_a]
-                val_b = row[idx_col_b]
+                val_a = row[idx_col_a] if km_a is not None else None
+                val_b = row[idx_col_b] if km_b is not None else None
                 codigo = row[idx_codigo]
 
                 # Ignora linhas sem código de torre válido
-                if not codigo or not isinstance(codigo, str) or "TO" not in codigo:
+                if not codigo or not isinstance(codigo, str):
                     continue
 
                 # LOG para depuração
                 print(f"Row: {row}")
                 print(f"val_a: {val_a}, val_b: {val_b}, km_a: {km_a}, km_b: {km_b}")
 
-                if km_a is not None and val_a is not None and abs(val_a - km_a) < menor_dif:
+                if val_a is not None and km_a is not None and abs(val_a - km_a) < menor_dif:
                     menor_dif = abs(val_a - km_a)
                     linha_selecionada = row
-                if km_b is not None and val_b is not None and abs(val_b - km_b) < menor_dif:
+                if val_b is not None and km_b is not None and abs(val_b - km_b) < menor_dif:
                     menor_dif = abs(val_b - km_b)
                     linha_selecionada = row
+
+            # LOG para depuração: Verificar linha selecionada
+            if linha_selecionada:
+                print(f"Linha selecionada: {linha_selecionada}")
+            else:
+                print("Nenhuma linha foi selecionada.")
 
             if linha_selecionada is None:
                 raise ValueError("Nenhuma linha encontrada para os valores fornecidos.")
@@ -102,8 +122,32 @@ class KMAppCore:
             if not codigo_torre:
                 raise ValueError("Código da torre não encontrado na planilha.")
 
-            # Exibe os detalhes da torre no aplicativo
-            return self.mostrar_detalhes_torre(df_key, codigo_torre, cidade, setor)
+            # Ajustar o código da torre para o formato do GPX
+            try:
+                codigo_torre_ajustado = self.ajustar_codigo_torre(codigo_torre, df_key)
+            except ValueError as e:
+                return f"Erro ao ajustar o código da torre: {e}"
+
+            # Buscar as coordenadas no GPX
+            gpx_file = self.linhas_gpx.get(df_key)
+            if not gpx_file:
+                return f"Erro: Arquivo GPX não especificado para a linha {df_key}."
+
+            torre_coords = self.buscar_torre_no_gpx(codigo_torre_ajustado, gpx_file)
+            if not torre_coords:
+                return f"Erro: Torre '{codigo_torre_ajustado}' não encontrada no arquivo GPX."
+
+            latitude, longitude = torre_coords
+            print("Renderizando template detalhes_torre.html com os seguintes dados:")
+            print(f"detalhes: {{'Torre': {codigo_torre}, 'Cidade': {cidade}, 'Setor': {setor}, 'latitude': {latitude}, 'longitude': {longitude}}}")
+            print(f"df_key: {df_key}")
+            return render_template("detalhes_torre.html", detalhes={
+                "Torre": codigo_torre,
+                "Cidade": cidade,
+                "Setor": setor,
+                "latitude": latitude,
+                "longitude": longitude
+            }, df_key=df_key)
 
         except Exception as e:
             return f"Erro: {e}"
@@ -172,8 +216,8 @@ class KMAppCore:
             return f"Erro: {e}"
 
     def buscar_torre_no_gpx(self, codigo_torre, gpx_file, incluir_prefixo=False):
-        if not gpx_file:
-            raise ValueError("Arquivo GPX não especificado para a linha selecionada.")
+        if not codigo_torre:
+            raise ValueError("Código da torre é inválido ou não foi fornecido.")
 
         gpx_path = Path(app.config['STATIC_FOLDER'], "resources") / gpx_file
         if not gpx_path.exists():
@@ -203,44 +247,43 @@ class KMAppCore:
         """
         Ajusta o código da torre da planilha para o formato esperado no GPX.
         Exemplo:
-        8500TO004 -> 850004 (apenas para linhas específicas)
-        7340TO001R -> 7340TO001R (mantém o formato original para outras linhas)
-        8060TO10 -> 806010
-        8060TO005 -> 806005
+        7350TO001 -> 001 (extrai apenas o número da torre)
+        V0006R -> 6 (extrai apenas o número principal, ignorando prefixos e sufixos)
         """
         if not codigo_torre:
-            return None
+            raise ValueError("Código da torre é inválido ou não foi fornecido.")
 
         # Remove espaços em branco no início e no final
         codigo_torre = codigo_torre.strip()
 
-        # Aplica o ajuste apenas para linhas específicas
-        if df_key in []:
-            # Divide o código em prefixo e número
-            if "TO" in codigo_torre:
-                partes = codigo_torre.split("TO")
-                if len(partes) == 2:
-                    prefixo = partes[0]
-                    numero = partes[1]
+        # Caso contenha "TO", extrai o número após "TO"
+        if "TO" in codigo_torre:
+            partes = codigo_torre.split("TO")
+            if len(partes) > 1:
+                numero = ''.join(filter(str.isdigit, partes[1]))  # Mantém apenas os dígitos
+                if not numero:
+                    raise ValueError("Número da torre não encontrado após o prefixo 'TO'.")
+                return str(int(numero))  # Remove zeros à esquerda e retorna o número
 
-                    # Remove zeros à esquerda do número e ajusta para o formato esperado
-                    numero = numero.zfill(3)  # Remove zeros à esquerda
-                    codigo_torre = f"{prefixo}{numero}"
-        else:
-            # Para outras linhas, mantém o código original
-            codigo_torre = codigo_torre
+        # Caso contenha apenas letras e números, extrai o número principal
+        numero = ''.join(filter(str.isdigit, codigo_torre))  # Mantém apenas os dígitos
+        if not numero:
+            raise ValueError("Número da torre não encontrado no código fornecido.")
 
-        # Log para depuração
-        print(f"Código ajustado: {codigo_torre}")
-
-        return codigo_torre
+        return str(int(numero))  # Remove zeros à esquerda e retorna o número
 
     def extrair_numero_torre(self, codigo_torre, incluir_prefixo=False):
+        """
+        Extrai o número da torre, mantendo letras sufixo, se presentes.
+        Exemplo:
+        V0006R -> 0006R
+        """
         if not codigo_torre:
             return None
 
         codigo_torre = codigo_torre.strip()
 
+        # Caso contenha "TO", extrai o número após "TO"
         if "TO" in codigo_torre:
             partes = codigo_torre.split("TO")
             if len(partes) > 1:
@@ -251,7 +294,12 @@ class KMAppCore:
                 numero = str(int(numero))  # Remove zeros à esquerda
                 return f"{prefixo}{numero}"
 
-        return None
+        # Caso não contenha "TO", tenta extrair números e manter sufixos alfanuméricos
+        numero = ''.join(filter(str.isalnum, codigo_torre))  # Mantém apenas caracteres alfanuméricos
+        if not numero:
+            return None
+
+        return numero
 
 km_app = KMAppCore()
 
@@ -264,11 +312,11 @@ def londrina():
     botoes_londrina = [
         ("Linha Londrina - Londrina Sul", "lonlns", "KMLON", "KMAPA", "KM LON LNS.xlsx"),
         ("Linha Londrina - Londrina Norte C1", "lonlna", "KM - LON - LNA", "KM - LNA - LON", "KM LON LNA.xlsx"),
-        ("Linha Londrina - Londrina Norte C2", "lonlna2", "KM LON-ASS", "KM ASS-LON", "KM LON LNA2.xlsx"),
-        ("Linha Londrina Norte - Apucarana", "lna", "KM - LON - LNA", "KM - LNA - LON", "KM LON LNA.xlsx"),
-        ("Linha Londrina - Sarandi", "lna_assis", "KM - LNA - ASS", "KM - ASS - LNA", "KM LNA ASS.xlsx"),
-        ("Linha Maringa - Sarandi", "maringa_sarandi", "KMMGA", "KMSDI", "KM MGA SDI.xlsx"),
-        ("Linha Assis C2 - Londrina Norte", "assis_c2_londrina_norte", "KM LNA", "KM ASS", "KM ASSIS LNA2.xlsx"),
+        ("Linha Londrina - Londrina Norte C2", "lonlna2", "LON-LNA", "LNA-LON", "KM LON LNA2.xlsx"),
+        ("Linha Londrina Sul - Apucarana", "apucarana", "LNS", "APA", "KM LON APA.xlsx"),
+        ("Linha Londrina - Sarandi", "lon_sdi", "LON-SDI", "SDI-LON", "KM LON SDI.xlsx"),
+        ("Linha Maringa - Sarandi", "lon_mga", "MGA-SDI", "SDI-MGA", "KM MGA SDI.xlsx"),
+        ("Linha Assis C2 - Londrina Norte", "assis_c2_londrina_norte", "LNA-ASS", "ASS-LNA", "KM LNA ASS2.xlsx"),
         ("Linha Assis C1 - Londrina Norte", "lna_assis", "KM - LNA - ASS", "KM - ASS - LNA", "KM LNA ASS.xlsx"),
         ("Linha Ivaiporã - Londrina", "ivp_lon", "KMIVP", "KMLON", "KM IVP LON.xlsx")
     ]
@@ -284,6 +332,8 @@ def campomourao():
         ("Linha Salto Santiago - Campo Mourão", "cmo_ssa", "KMSSA", "KMIVP", "KM CMO SSA.xlsx"),
         ("Linha Salto Santiago C2 - Campo Mourão", "cmo_ssac2", "KMSSA", "KMIVP", "KM CMO SSAC2.xlsx"),
         ("Linha Ivaiporã - Cascavel", "ivp_cvo", "KMIVP", "KMCVO", "KM IVP CVO.xlsx"),
+        ("Linha Cascavel - Cascavel Oeste", "cvo_cvo", "CEL-CVO", "CVO-CEL", "KM CEL CVO.xlsx"),
+        ("Linha Cascavel - Guaira", "cvo_guaira", "CVO-GUI", "GUI-CVO", "KM CVO GUI.xlsx"),
         ("Linha Areia - Ivaiporã", "are_ivp", "KMARE", "KMIVP", "KM ARE IVP.xlsx"),
     ]
     return render_template("menu_campomourao.html", botoes_campomourao=botoes_campomourao)

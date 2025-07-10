@@ -8,6 +8,8 @@
         <p><strong>Torre:</strong> {{ detalhes['Torre'] }}</p>
         <p><strong>Cidade:</strong> {{ detalhes['Cidade'] }}</p>
         <p><strong>Setor:</strong> {{ detalhes['Setor'] }}</p>
+        <p><strong>Latitude:</strong> {{ detalhes['latitude'] }}</p>
+        <p><strong>Longitude:</strong> {{ detalhes['longitude'] }}</p>
         <form action="{{ url_for('visualizar_mapa') }}" method="post">
             <input type="hidden" name="df_key" value="{{ df_key }}">
             <input type="hidden" name="codigo_torre" value="{{ detalhes['Torre'] }}">

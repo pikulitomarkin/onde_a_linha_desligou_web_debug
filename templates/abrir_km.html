@@ -3,12 +3,12 @@
 {% block title %}Buscar Torre{% endblock %}
 
 {% block content %}
-    <h1 class="titulo-km">DIGITE O KM PARTINDO DA SUBESTAÇÃO DE {{ texto_linha.split(' - ')[0].strip().upper() }}</h1>
+    <h1 class="titulo-km">DIGITE O KM PARTINDO DA SUBESTAÇÃO DE {{ texto_linha.split(' - ')[0].strip().upper().replace('LINHA ', '') }}</h1>
     <form action="{{ url_for('processar_busca') }}" method="post" class="form-km">
         <label for="valor_a">KM:</label>
         <input type="text" id="valor_a" name="valor_a" autocomplete="off">
 
-        <h1 class="titulo-km">DIGITE O KM PARTINDO DA SUBESTAÇÃO DE {{ texto_linha.split(' - ')[1].strip().upper() }}</h1>
+        <h1 class="titulo-km">DIGITE O KM PARTINDO DA SUBESTAÇÃO DE {{ texto_linha.split(' - ')[1].strip().upper().replace('LINHA ', '') }}</h1>
         <label for="valor_b">KM:</label>
         <input type="text" id="valor_b" name="valor_b" autocomplete="off">
 
