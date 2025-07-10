@@ -4,22 +4,103 @@
 
 {% block content %}
     <h1>Detalhes da Torre</h1>
-    <div style="max-width:400px;margin:0 auto;">
-        <p><strong>Torre:</strong> {{ detalhes['Torre'] }}</p>
-        <p><strong>Cidade:</strong> {{ detalhes['Cidade'] }}</p>
-        <p><strong>Setor:</strong> {{ detalhes['Setor'] }}</p>
-        <p><strong>Latitude:</strong> {{ detalhes['latitude'] }}</p>
-        <p><strong>Longitude:</strong> {{ detalhes['longitude'] }}</p>
-        <form action="{{ url_for('visualizar_mapa') }}" method="post">
-            <input type="hidden" name="df_key" value="{{ df_key }}">
-            <input type="hidden" name="codigo_torre" value="{{ detalhes['Torre'] }}">
-            <button type="submit">Visualizar no Mapa</button>
-        </form>
-        <a href="osmandmaps://?lat={{ detalhes['latitude'] }}&lon={{ detalhes['longitude'] }}&z=16" target="_blank">
-            Abrir no OsmAnd
-        </a>
+    
+    <div style="max-width:500px;margin:0 auto;">
+        <!-- Informações da Torre -->
+        <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:20px;margin-bottom:24px;">
+            <h2 style="color:#0056b3;margin-top:0;font-size:1.4rem;">Informações da Torre</h2>
+            <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;border-left:4px solid #0056b3;">
+                    <strong>Torre:</strong> <span style="color:#0056b3;font-weight:bold;font-size:1.1rem;">{{ detalhes['Torre'] }}</span>
+                </p>
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Cidade:</strong> {{ detalhes['Cidade'] }}
+                </p>
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Setor:</strong> {{ detalhes['Setor'] }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Coordenadas -->
+        {% if detalhes['latitude'] and detalhes['longitude'] %}
+        <div style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:8px;padding:20px;margin-bottom:24px;">
+            <h3 style="color:#0056b3;margin-top:0;font-size:1.2rem;">📍 Coordenadas</h3>
+            <div style="display:grid;grid-template-columns:1fr;gap:8px;">
+                <p style="margin:4px 0;padding:6px;background:#fff;border-radius:4px;font-family:monospace;">
+                    <strong>Latitude:</strong> {{ "%.6f"|format(detalhes['latitude']) }}
+                </p>
+                <p style="margin:4px 0;padding:6px;background:#fff;border-radius:4px;font-family:monospace;">
+                    <strong>Longitude:</strong> {{ "%.6f"|format(detalhes['longitude']) }}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Ações -->
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+            <form action="{{ url_for('visualizar_mapa') }}" method="post" style="margin:0;">
+                <input type="hidden" name="df_key" value="{{ df_key }}">
+                <input type="hidden" name="codigo_torre" value="{{ detalhes['Torre'] }}">
+                <button type="submit" style="width:100%;background:#0056b3;color:#fff;padding:14px;border:none;border-radius:8px;font-size:1.1rem;font-weight:bold;cursor:pointer;transition:background 0.2s;">
+                    🗺️ Visualizar no Mapa
+                </button>
+            </form>
+            
+            {% if detalhes['latitude'] and detalhes['longitude'] %}
+            <a href="osmandmaps://?lat={{ detalhes['latitude'] }}&lon={{ detalhes['longitude'] }}&z=16" 
+               target="_blank"
+               style="display:block;background:#28a745;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+                📱 Abrir no OsmAnd
+            </a>
+            
+            <a href="https://www.google.com/maps?q={{ detalhes['latitude'] }},{{ detalhes['longitude'] }}" 
+               target="_blank"
+               style="display:block;background:#dc3545;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+                🌐 Abrir no Google Maps
+            </a>
+            {% endif %}
+        </div>
     </div>
+    
     <div style="text-align:center;margin-top:32px;">
-        <a href="{{ url_for('index') }}">Voltar</a>
+        <a href="{{ url_for('index') }}" class="voltar-link">← Voltar ao Menu Principal</a>
     </div>
+
+    <style>
+        button:hover {
+            background-color: #003d82 !important;
+        }
+        
+        a[href*="osmandmaps"]:hover {
+            background-color: #1e7e34 !important;
+        }
+        
+        a[href*="google.com/maps"]:hover {
+            background-color: #c82333 !important;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px 8px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem !important;
+            }
+            
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            button, a[href*="maps"] {
+                font-size: 1rem !important;
+                padding: 12px !important;
+            }
+        }
+    </style>
 {% endblock %}
