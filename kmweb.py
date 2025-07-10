@@ -122,6 +122,9 @@ class KMAppCore:
             if not codigo_torre:
                 raise ValueError("Código da torre não encontrado na planilha.")
 
+            # Extrair apenas o número da torre para exibição
+            numero_torre_display = self.extrair_apenas_numero(codigo_torre)
+            
             # Ajustar o código da torre para o formato do GPX
             try:
                 codigo_torre_ajustado = self.ajustar_codigo_torre(codigo_torre, df_key)
@@ -138,11 +141,20 @@ class KMAppCore:
                 return render_template("resultado.html", mensagem=f"Erro: Torre '{codigo_torre_ajustado}' não encontrada no arquivo GPX.")
 
             latitude, longitude = torre_coords
-            print("Renderizando template detalhes_torre.html com os seguintes dados:")
-            print(f"detalhes: {{'Torre': {codigo_torre}, 'Cidade': {cidade}, 'Setor': {setor}, 'latitude': {latitude}, 'longitude': {longitude}}}")
+            print("="*50)
+            print("DADOS PARA O TEMPLATE detalhes_torre.html:")
+            print(f"Torre original: {codigo_torre}")
+            print(f"Torre para exibição: {numero_torre_display}")
+            print(f"Cidade: {cidade}")
+            print(f"Setor: {setor}")
+            print(f"Latitude: {latitude}")
+            print(f"Longitude: {longitude}")
             print(f"df_key: {df_key}")
+            print("="*50)
+            
             return render_template("detalhes_torre.html", detalhes={
-                "Torre": codigo_torre,
+                "Torre": numero_torre_display,  # Usar apenas o número para exibição
+                "TorreOriginal": codigo_torre,  # Manter o código original para o GPX
                 "Cidade": cidade,
                 "Setor": setor,
                 "latitude": latitude,
@@ -301,6 +313,35 @@ class KMAppCore:
             return None
 
         return numero
+
+    def extrair_apenas_numero(self, codigo_torre):
+        """
+        Extrai apenas o número da torre, removendo todos os prefixos e sufixos.
+        Exemplos:
+        V0005 -> 5
+        7460TO006 -> 6
+        V0006R -> 6
+        """
+        if not codigo_torre:
+            return None
+
+        codigo_torre = str(codigo_torre).strip()
+
+        # Caso contenha "TO", extrai o número após "TO"
+        if "TO" in codigo_torre:
+            partes = codigo_torre.split("TO")
+            if len(partes) > 1:
+                numero = ''.join(filter(str.isdigit, partes[1]))  # Mantém apenas os dígitos
+                if not numero:
+                    return None
+                return str(int(numero))  # Remove zeros à esquerda e retorna o número
+
+        # Para outros casos, extrai apenas os dígitos e remove zeros à esquerda
+        numero = ''.join(filter(str.isdigit, codigo_torre))  # Mantém apenas os dígitos
+        if not numero:
+            return None
+
+        return str(int(numero))  # Remove zeros à esquerda e retorna o número
 
 km_app = KMAppCore()
 
