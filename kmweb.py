@@ -316,11 +316,11 @@ class KMAppCore:
 
     def extrair_apenas_numero(self, codigo_torre):
         """
-        Extrai apenas o número da torre, removendo todos os prefixos e sufixos.
+        Extrai apenas o número da torre, removendo prefixos mas mantendo sufixos.
         Exemplos:
         V0005 -> 5
         7460TO006 -> 6
-        V0006R -> 6
+        V0006R -> 6R
         """
         if not codigo_torre:
             return None
@@ -336,8 +336,21 @@ class KMAppCore:
                     return None
                 return str(int(numero))  # Remove zeros à esquerda e retorna o número
 
-        # Para outros casos, extrai apenas os dígitos e remove zeros à esquerda
-        numero = ''.join(filter(str.isdigit, codigo_torre))  # Mantém apenas os dígitos
+        # Para outros casos, extrai o número principal e mantém sufixos alfabéticos
+        import re
+        # Padrão: captura prefixos opcionais + número + sufixos opcionais
+        match = re.match(r'^[A-Z]*(\d+)([A-Z]*)$', codigo_torre.upper())
+        
+        if match:
+            numero = match.group(1)  # Parte numérica
+            sufixo = match.group(2)  # Parte alfabética após o número
+            
+            if numero:
+                numero_limpo = str(int(numero))  # Remove zeros à esquerda
+                return f"{numero_limpo}{sufixo}" if sufixo else numero_limpo
+        
+        # Fallback: extrai apenas os dígitos se o padrão não funcionar
+        numero = ''.join(filter(str.isdigit, codigo_torre))
         if not numero:
             return None
 
