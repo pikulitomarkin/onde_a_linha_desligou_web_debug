@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Sobre o Sistema{% endblock %}
+
+{% block content %}
+    <h1>📋 Sobre o Sistema</h1>
+    
+    <div style="max-width:600px;margin:0 auto;">
+        <!-- Informações do Sistema -->
+        <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#0056b3;margin-top:0;font-size:1.4rem;">🎯 Objetivo</h2>
+            <p style="font-size:1.1rem;line-height:1.6;margin-bottom:16px;">
+                Este sistema foi desenvolvido para facilitar a localização de torres de transmissão elétrica 
+                nas linhas de Londrina e Campo Mourão, permitindo buscar torres específicas através de 
+                coordenadas quilométricas (KM).
+            </p>
+        </div>
+
+        <!-- Funcionalidades -->
+        <div style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#0056b3;margin-top:0;font-size:1.4rem;">⚡ Funcionalidades</h2>
+            <ul style="font-size:1.1rem;line-height:1.8;padding-left:20px;">
+                <li><strong>Busca por KM:</strong> Localiza torres próximas aos quilômetros informados</li>
+                <li><strong>Coordenadas GPS:</strong> Exibe latitude e longitude precisas das torres</li>
+                <li><strong>Visualização no Mapa:</strong> Mostra a localização da torre em mapa interativo</li>
+                <li><strong>Integração com Apps:</strong> Abre diretamente no OsmAnd ou Google Maps</li>
+                <li><strong>Interface Responsiva:</strong> Funciona perfeitamente em tablets e smartphones</li>
+            </ul>
+        </div>
+
+        <!-- Linhas Disponíveis -->
+        <div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#155724;margin-top:0;font-size:1.4rem;">🗺️ Linhas Disponíveis</h2>
+            
+            <h3 style="color:#0056b3;font-size:1.2rem;margin-bottom:12px;">Região de Londrina:</h3>
+            <ul style="font-size:1rem;line-height:1.6;margin-bottom:20px;padding-left:20px;">
+                <li>Linha Londrina - Londrina Sul</li>
+                <li>Linha Londrina - Londrina Copel C1 e C2</li>
+                <li>Linha Londrina Sul - Apucarana</li>
+                <li>Linha Sarandi - Londrina</li>
+                <li>Linha Maringá - Sarandi</li>
+                <li>Linha Assis - Londrina Copel C1 e C2</li>
+                <li>Linha Ivaiporã - Londrina</li>
+            </ul>
+
+            <h3 style="color:#0056b3;font-size:1.2rem;margin-bottom:12px;">Região de Campo Mourão:</h3>
+            <ul style="font-size:1rem;line-height:1.6;padding-left:20px;">
+                <li>Linha Campo Mourão - Apucarana</li>
+                <li>Linha Campo Mourão - Maringá</li>
+                <li>Linha Salto Osório - Campo Mourão C1 e C2</li>
+                <li>Linha Salto Santiago - Campo Mourão C1 e C2</li>
+                <li>Linha Ivaiporã - Cascavel</li>
+                <li>Linha Cascavel - Cascavel Oeste</li>
+                <li>Linha Cascavel - Guaíra</li>
+                <li>Linha Areia - Ivaiporã</li>
+            </ul>
+        </div>
+
+        <!-- Como Usar -->
+        <div style="background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#856404;margin-top:0;font-size:1.4rem;">📖 Como Usar</h2>
+            <ol style="font-size:1.1rem;line-height:1.8;padding-left:20px;">
+                <li>Selecione a região (Londrina ou Campo Mourão)</li>
+                <li>Escolha a linha de transmissão desejada</li>
+                <li>Informe o quilômetro (KM) da torre que procura</li>
+                <li>O sistema encontrará a torre mais próxima</li>
+                <li>Visualize as informações e coordenadas da torre</li>
+                <li>Use os botões para abrir no mapa ou aplicativo de navegação</li>
+            </ol>
+        </div>
+
+        <!-- Informações Técnicas -->
+        <div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#721c24;margin-top:0;font-size:1.4rem;">⚙️ Informações Técnicas</h2>
+            <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Tecnologia:</strong> Flask (Python) + HTML5 + JavaScript
+                </p>
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Mapas:</strong> Folium + OpenStreetMap
+                </p>
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Dados:</strong> Planilhas Excel + Arquivos GPX
+                </p>
+                <p style="margin:8px 0;padding:8px;background:#fff;border-radius:4px;">
+                    <strong>Compatibilidade:</strong> Desktop, Tablet e Smartphone
+                </p>
+            </div>
+        </div>
+
+        <!-- Créditos -->
+        <div style="background:#e7f3ff;border:1px solid #b3d9ff;border-radius:8px;padding:24px;margin-bottom:24px;">
+            <h2 style="color:#0056b3;margin-top:0;font-size:1.4rem;">👥 Desenvolvimento</h2>
+            <div style="text-align:center;background:#fff;border-radius:6px;padding:20px;">
+                <p style="font-size:1.2rem;font-weight:bold;color:#0056b3;margin:0 0 16px 0;">
+                    Este sistema foi desenvolvido por:
+                </p>
+                <div style="display:grid;grid-template-columns:1fr;gap:12px;max-width:400px;margin:0 auto;">
+                    <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;padding:12px;">
+                        <p style="margin:0;font-size:1.1rem;color:#333;">
+                            <strong>🧑‍💻 Romeu Welby Pugin</strong>
+                        </p>
+                    </div>
+                    <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;padding:12px;">
+                        <p style="margin:0;font-size:1.1rem;color:#333;">
+                            <strong>👨‍💻 Marcos Roberto Padilha</strong>
+                        </p>
+                    </div>
+                    <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;padding:12px;">
+                        <p style="margin:0;font-size:1.1rem;color:#333;">
+                            <strong>🤖 GitHub Copilot</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Voltar -->
+        <div style="text-align:center;margin-top:32px;">
+            <a href="{{ url_for('index') }}" 
+               style="display:inline-block;background:#0056b3;color:#fff;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+                🏠 Voltar ao Menu Principal
+            </a>
+        </div>
+    </div>
+
+    <style>
+        a[href*="index"]:hover {
+            background-color: #003d82 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px 8px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem !important;
+            }
+            
+            h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            p, li {
+                font-size: 1rem !important;
+            }
+            
+            ul, ol {
+                padding-left: 16px;
+            }
+        }
+    </style>
+{% endblock %}

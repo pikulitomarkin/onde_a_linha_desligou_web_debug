@@ -428,6 +428,10 @@ def visualizar_mapa():
         mapa_url = url_for('static', filename="mapa_torre.html")
         return render_template("mapa.html", mapa_path=mapa_url)
 
+@app.route("/sobre")
+def sobre():
+    return render_template("sobre.html")
+
 # Rota para servir arquivos estáticos (CSS, JS, imagens, etc.)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
