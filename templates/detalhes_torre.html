@@ -48,15 +48,22 @@
             </form>
             
             {% if detalhes['latitude'] and detalhes['longitude'] %}
-            <a href="osmandmaps://?lat={{ detalhes['latitude'] }}&lon={{ detalhes['longitude'] }}&z=16" 
-               target="_blank"
-               style="display:block;background:#28a745;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
-                📱 Abrir no OsmAnd
-            </a>
+            <!-- Botões para OsmAnd com múltiplas opções -->
+            <div style="display:grid;grid-template-columns:1fr;gap:8px;">
+                <button onclick="abrirOsmAnd({{ detalhes['latitude'] }}, {{ detalhes['longitude'] }})" 
+                        style="width:100%;background:#28a745;color:#fff;padding:14px;border:none;border-radius:8px;font-size:1.1rem;font-weight:bold;cursor:pointer;transition:background 0.2s;">
+                    📱 Abrir no OsmAnd
+                </button>
+                
+                <a href="geo:{{ detalhes['latitude'] }},{{ detalhes['longitude'] }}?q={{ detalhes['latitude'] }},{{ detalhes['longitude'] }}(Torre {{ detalhes['Torre'] }})" 
+                   style="display:block;background:#17a2b8;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+                    🧭 Abrir em App de Mapas
+                </a>
+            </div>
             
             <a href="https://www.google.com/maps?q={{ detalhes['latitude'] }},{{ detalhes['longitude'] }}" 
                target="_blank"
-               style="display:block;background:#dc3545;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;">
+               style="display:block;background:#dc3545;color:#fff;padding:14px;border-radius:8px;text-decoration:none;text-align:center;font-weight:bold;font-size:1.1rem;transition:background 0.2s;margin-top:8px;">
                 🌐 Abrir no Google Maps
             </a>
             {% endif %}
@@ -78,6 +85,14 @@
         
         a[href*="google.com/maps"]:hover {
             background-color: #c82333 !important;
+        }
+        
+        button[onclick*="abrirOsmAnd"]:hover {
+            background-color: #1e7e34 !important;
+        }
+        
+        a[href*="geo:"]:hover {
+            background-color: #138496 !important;
         }
         
         @media (max-width: 600px) {
@@ -103,4 +118,64 @@
             }
         }
     </style>
+
+    <script>
+        function abrirOsmAnd(lat, lon) {
+            // Lista de URI schemes do OsmAnd para tentar
+            const osmandSchemes = [
+                `osmand://?lat=${lat}&lon=${lon}&z=16`,           // OsmAnd básico
+                `osmandmaps://?lat=${lat}&lon=${lon}&z=16`,       // OsmAnd Maps
+                `osmand://search?lat=${lat}&lon=${lon}`,          // Alternativa
+                `osmandmaps://search?lat=${lat}&lon=${lon}`,      // Alternativa Maps
+                `osmand://navigate?lat=${lat}&lon=${lon}`,        // Navegação
+                `osmandmaps://navigate?lat=${lat}&lon=${lon}`     // Navegação Maps
+            ];
+            
+            let tentativaAtual = 0;
+            
+            function tentarProximoScheme() {
+                if (tentativaAtual >= osmandSchemes.length) {
+                    // Se todas as tentativas falharam, usa geo: como fallback
+                    const geoUrl = `geo:${lat},${lon}?q=${lat},${lon}(Torre)`;
+                    console.log('Tentando geo:', geoUrl);
+                    window.location.href = geoUrl;
+                    return;
+                }
+                
+                const scheme = osmandSchemes[tentativaAtual];
+                console.log('Tentando scheme:', scheme);
+                
+                // Cria um iframe oculto para testar o scheme
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = scheme;
+                document.body.appendChild(iframe);
+                
+                // Remove o iframe depois de um tempo
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 1000);
+                
+                // Tenta o próximo scheme se este falhar
+                tentativaAtual++;
+                setTimeout(() => {
+                    if (document.visibilityState === 'visible') {
+                        // Se ainda estamos na página, o scheme não funcionou
+                        tentarProximoScheme();
+                    }
+                }, 500);
+            }
+            
+            // Detecta se é um dispositivo móvel
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                tentarProximoScheme();
+            } else {
+                // Em desktop, abre o Google Maps como fallback
+                const googleUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+                window.open(googleUrl, '_blank');
+            }
+        }
+    </script>
 {% endblock %}
