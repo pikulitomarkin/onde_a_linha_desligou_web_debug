@@ -366,13 +366,13 @@ def index():
 def londrina():
     botoes_londrina = [
         ("Linha Londrina - Londrina Sul", "lonlns", "KMLON", "KMAPA", "KM LON LNS.xlsx"),
-        ("Linha Londrina - Londrina Norte C1", "lonlna", "KM - LON - LNA", "KM - LNA - LON", "KM LON LNA.xlsx"),
-        ("Linha Londrina - Londrina Norte C2", "lonlna2", "LON-LNA", "LNA-LON", "KM LON LNA2.xlsx"),
+        ("Linha Londrina - Londrina Copel C1", "lonlna", "KM - LON - LNA", "KM - LNA - LON", "KM LON LNA.xlsx"),
+        ("Linha Londrina - Londrina Copel C2", "lonlna2", "LON-LNA", "LNA-LON", "KM LON LNA2.xlsx"),
         ("Linha Londrina Sul - Apucarana", "apucarana", "LNS", "APA", "KM LON APA.xlsx"),
         ("Linha Sarandi - Londrina", "lon_sdi", "LON-SDI", "SDI-LON", "KM LON SDI.xlsx"),
         ("Linha Maringa - Sarandi", "lon_mga", "MGA-SDI", "SDI-MGA", "KM MGA SDI.xlsx"),
-        ("Linha Assis C2 - Londrina Norte", "assis_c2_londrina_norte", "LNA-ASS", "ASS-LNA", "KM LNA ASS2.xlsx"),
-        ("Linha Assis C1 - Londrina Norte", "lna_assis", "KM - LNA - ASS", "KM - ASS - LNA", "KM LNA ASS.xlsx"),
+        ("Linha Assis C2 - Londrina Copel", "assis_c2_londrina_norte", "LNA-ASS", "ASS-LNA", "KM LNA ASS2.xlsx"),
+        ("Linha Assis C1 - Londrina Copel", "lna_assis", "KM - LNA - ASS", "KM - ASS - LNA", "KM LNA ASS.xlsx"),
         ("Linha Ivaiporã - Londrina", "ivp_lon", "KMIVP", "KMLON", "KM IVP LON.xlsx")
     ]
     return render_template("menu_londrina.html", botoes_londrina=botoes_londrina)
