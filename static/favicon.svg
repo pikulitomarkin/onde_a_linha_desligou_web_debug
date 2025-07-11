@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Torre de transmissão -->
+  <defs>
+    <style>
+      .torre { fill: #0056b3; stroke: #003d82; stroke-width: 0.5; }
+      .cabo { stroke: #666; stroke-width: 0.8; fill: none; }
+    </style>
+  </defs>
+  
+  <!-- Base da torre -->
+  <polygon class="torre" points="14,30 18,30 17,4 15,4"/>
+  
+  <!-- Estrutura horizontal superior -->
+  <rect class="torre" x="10" y="4" width="12" height="1"/>
+  
+  <!-- Estrutura horizontal meio -->
+  <rect class="torre" x="11" y="12" width="10" height="1"/>
+  
+  <!-- Estrutura horizontal inferior -->
+  <rect class="torre" x="12" y="20" width="8" height="1"/>
+  
+  <!-- Braços laterais superiores -->
+  <polygon class="torre" points="10,4 8,6 9,7 11,5"/>
+  <polygon class="torre" points="22,4 24,6 23,7 21,5"/>
+  
+  <!-- Braços laterais meio -->
+  <polygon class="torre" points="11,12 9,14 10,15 12,13"/>
+  <polygon class="torre" points="21,12 23,14 22,15 20,13"/>
+  
+  <!-- Cabos de transmissão -->
+  <path class="cabo" d="M8,7 Q16,10 24,7"/>
+  <path class="cabo" d="M9,15 Q16,18 23,15"/>
+  <path class="cabo" d="M8,7 Q16,4 24,7"/>
+  
+  <!-- Isoladores -->
+  <circle fill="#fff" stroke="#666" stroke-width="0.5" cx="8" cy="7" r="1"/>
+  <circle fill="#fff" stroke="#666" stroke-width="0.5" cx="24" cy="7" r="1"/>
+  <circle fill="#fff" stroke="#666" stroke-width="0.5" cx="9" cy="15" r="1"/>
+  <circle fill="#fff" stroke="#666" stroke-width="0.5" cx="23" cy="15" r="1"/>
+</svg>
